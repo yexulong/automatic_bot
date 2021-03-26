@@ -9,7 +9,7 @@ from common.game_enum import ConnectEnum
 
 
 class Device(object):
-    def __init__(self, name, connectType):
+    def __init__(self, name, connectType=1):
         """
         初始化设备，获取设备的分辨率等信息
         :param name:
