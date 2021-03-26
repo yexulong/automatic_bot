@@ -9,7 +9,7 @@ import win32api
 import win32con
 import win32gui
 
-from Log import MyLog, log
+from common.Log import MyLog, log
 
 
 class Connect(object):

@@ -3,9 +3,9 @@ import traceback
 import cv2
 import win32ui
 
-from connect import *
-from factory import ConnectFactory
-from game_enum import ConnectEnum
+from common.connect import *
+from common.factory import ConnectFactory
+from common.game_enum import ConnectEnum
 
 
 class Device(object):

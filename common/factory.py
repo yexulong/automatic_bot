@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from connect import WindowsConnect, SimulatorConnect
-from game_enum import ConnectEnum
+from common.connect import WindowsConnect, SimulatorConnect
+from common.game_enum import ConnectEnum
 
 
 class ConnectFactory(object):
