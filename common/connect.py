@@ -21,6 +21,8 @@ def proc_rand_pos(pos, pos_end=None):
     if pos_end is None:
         pos_rand = pos
     else:
+        pos = list(pos)
+        pos_end = list(pos_end)
         if pos[0] > pos_end[0]:
             pos[0], pos_end[0] = pos_end[0], pos[0]
         if pos[1] > pos_end[1]:

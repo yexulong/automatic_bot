@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
 import traceback
+
 import cv2
 import win32ui
 
 from common.connect import *
-from common.factory import ConnectFactory
+from common.connect_factory import ConnectFactory
 from common.game_enum import ConnectEnum
 
 
@@ -25,6 +27,7 @@ class Device(object):
         self._client_w = r2 - l2
         self._border_l = ((r1 - l1) - (r2 - l2)) // 2
         self._border_t = ((b1 - t1) - (b2 - t2)) - self._border_l
+        self.base_path = os.path.abspath(os.path.dirname(__file__))
 
     def init_mem(self):
         self.hwindc = win32gui.GetWindowDC(self.connect.hwnd)
@@ -34,6 +37,9 @@ class Device(object):
         self.bmp.CreateCompatibleBitmap(
             self.srcdc, self._client_w, self._client_h)
         self.memdc.SelectObject(self.bmp)
+
+    def shape(self):
+        return self._client_w, self._client_h, self._offset_w, self._offset_h
 
     def click_bg(self, pos, pos_end=None):
         return self.connect.click_bg(pos, pos_end)
@@ -64,6 +70,9 @@ class Device(object):
                               (self._border_l, self._border_t), win32con.SRCCOPY)
 
             if file_name is not None:
+                if not os.path.exists(os.path.dirname(file_name)):
+                    print(os.path.dirname(file_name))
+                    os.makedirs(os.path.dirname(file_name))
                 self.bmp.SaveBitmapFile(self.memdc, file_name)
                 return
             else:
@@ -137,7 +146,6 @@ class Device(object):
             img_src = self.window_full_shot(None, gray)
 
         # show_img(img_src)
-
         # 读入文件
         if gray == 0:
             img_template = cv2.imread(img_template_path, cv2.IMREAD_COLOR)
@@ -172,19 +180,44 @@ class Device(object):
         if conf >= confidence:
             click_pos = tuple(i + j for i, j in zip(loc, offset_pos))
             self.click_bg(click_pos)
+            return True
         else:
             self.connect.logger.error('{} 查找失败'.format(img_template_path))
             self.take_screenshot()
+            return False
 
     def take_screenshot(self):
         """
         截图
         """
         name = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
-        img_src_path = 'img/screenshots/{}.png'.format(name)
+        img_src_path = '{}/{}.png'.format(os.path.join(self.base_path, 'img', 'screenshots'), name)
         self.window_full_shot(img_src_path)
         self.connect.logger.info('截图已保存至{}'.format(img_src_path))
         return img_src_path
+
+    def wait_game_img(self, img_path, timeout=100, confidence=0.7, quit_game=False):
+        """
+        等待游戏图像
+            :param img_path: 图片路径
+            :param max_time: 超时时间
+            :param quit_game: 超时后是否退出
+            :return: 成功返回坐标，失败返回False
+        """
+        start_time = time.time()
+        while time.time()-start_time <= float(timeout):
+            maxVal, maxLoc = self.find_img(img_path)
+            if maxVal >= confidence:
+                return maxLoc
+            if timeout > 5:
+                time.sleep(1)
+            else:
+                time.sleep(0.1)
+        if quit_game:
+            # 超时则退出游戏
+            self.quit_game()
+        else:
+            return False
 
 
 class MuMuSimulator(Device):

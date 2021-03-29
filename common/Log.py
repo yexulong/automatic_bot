@@ -3,7 +3,7 @@ import functools
 import logging
 import os
 
-from common.common import get_config
+from common import get_config
 
 
 class MyLog(object):

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from common.connect import WindowsConnect, SimulatorConnect
-from common.game_enum import ConnectEnum, DeviceEnum
-from common.device import Device, MuMuSimulator
+from common.game_enum import ConnectEnum
+
+
+# from common.device import Device, MuMuSimulator
 
 
 class ConnectFactory(object):
@@ -19,19 +21,6 @@ class ConnectFactory(object):
         #     self.connect = YeShenConnect(name, hwnd)
         self.connect.connect()
         return self.connect
-
-
-class DeviceFactory(object):
-    def __init__(self):
-        self.device = None
-
-    def get_device(self, name: str, deviceType: int = DeviceEnum.WINDOWS.value):
-        if deviceType == DeviceEnum.WINDOWS.value:
-            self.device = Device(name)
-        elif deviceType == DeviceEnum.MUMU.value:
-            self.device = MuMuSimulator(name)
-
-        return self.device
 
 
 if __name__ == '__main__':
