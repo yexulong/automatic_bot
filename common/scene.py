@@ -2,6 +2,8 @@
 import time
 from abc import ABC, abstractmethod
 
+# TODO 用状态机模式改造scene、state
+
 
 class BaseState(ABC):
     """
@@ -15,7 +17,7 @@ class BaseState(ABC):
 class SearchState(BaseState):
     def handle(self, device, pic, end_pic, timeout=2, *args, **kwargs):
         start_time = time.time()
-        while time.time()-start_time <= timeout:
+        while time.time() - start_time <= timeout:
             if device.find_and_click(pic, *args, **kwargs):
                 return FightState()
             else:
@@ -67,8 +69,8 @@ class Scene(object):
     def finish(self, device, pos=None, pos_end=None):
         device.connect.logger.info('finish')
         x, y, x1, y1 = device.shape()
-        pos = pos or (int(x/2), int(y/2))
-        pos_end = pos_end or (int((x+x1)/2), int((y+y1)/2))
+        pos = pos or (int(x / 2), int(y / 2))
+        pos_end = pos_end or (int((x + x1) / 2), int((y + y1) / 2))
         device.click_bg(pos, pos_end)
         self.state = 'search'
         return 'search'
