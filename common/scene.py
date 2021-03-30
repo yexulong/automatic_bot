@@ -58,14 +58,20 @@ class Scene(object):
         return None
 
     def fight(self, device, pic, *args, **kwargs):
-        print('fighting')
+        device.connect.logger.info('fighting')
         device.wait_game_img(pic, *args, **kwargs)
-        return device.find_and_click(pic, *args, **kwargs)
+        device.find_and_click(pic, *args, **kwargs)
+        self.state = 'finsh'
+        return 'finsh'
 
-    def finish(self, device):
-        print('finish')
+    def finish(self, device, pos=None, pos_end=None):
+        device.connect.logger.info('finish')
         x, y, x1, y1 = device.shape()
-        device.click_bg((x/2, y/2), ((x+x1)/2, (y+y1)/2))
+        pos = pos or (int(x/2), int(y/2))
+        pos_end = pos_end or (int((x+x1)/2), int((y+y1)/2))
+        device.click_bg(pos, pos_end)
+        self.state = 'search'
+        return 'search'
 
 
 if __name__ == '__main__':

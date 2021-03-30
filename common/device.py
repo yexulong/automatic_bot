@@ -47,6 +47,13 @@ class Device(object):
     def drag_bg(self, pos1, pos2, cost_time):
         return self.connect.drag_bg(pos1, pos2, cost_time)
 
+    def check(self, pic, confidence=0.5):
+        conf, pos = self.find_img(pic)
+        if conf >= confidence:
+            return True
+        else:
+            return False
+
     def dump(self):
         """
         打印自身成员变量值
@@ -145,7 +152,10 @@ class Device(object):
         else:
             img_src = self.window_full_shot(None, gray)
 
-        # show_img(img_src)
+        # 检查图片是否存在
+        if not os.path.exists(img_template_path):
+            self.connect.logger.error('{} 文件不存在，请检查。'.format(img_template_path))
+            return 0, (0, 0)
         # 读入文件
         if gray == 0:
             img_template = cv2.imread(img_template_path, cv2.IMREAD_COLOR)
