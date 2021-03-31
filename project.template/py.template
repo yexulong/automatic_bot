@@ -1,7 +1,0 @@
-# -*- coding: utf-8 -*-
-from common.device import {device}
-
-
-class {project_class_name}:
-    def __init__(self):
-        self.device = {device}('{hwnd_name}')
